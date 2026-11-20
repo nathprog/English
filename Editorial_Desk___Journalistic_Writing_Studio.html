@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Editorial Desk — Journalistic Writing Studio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Newsreader', 'Georgia', 'serif'],
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          },
+          colors: {
+            paper: '#FAF9F6',
+            paperAlt: '#F3F1EC',
+            ink: '#1A1A1A',
+            muted: '#575550',
+            rule: '#DCD8CE',
+            crimson: '#E3120B',
+            crimsonDark: '#B80E08',
+            slateAccent: '#1E293B',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #FAF9F6;
+      color: #1A1A1A;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-editorial {
+      font-family: 'Newsreader', Georgia, serif;
+    }
+    textarea:focus, input:focus, select:focus {
+      outline: none;
+      border-color: #1A1A1A;
+    }
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #FAF9F6;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CFCBC0;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-crimson selection:text-white">
+
+  <!-- Top Masthead -->
+  <header class="border-b border-rule bg-paper sticky top-0 z-30">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <!-- Top Crimson Bar -->
+      <div class="h-1 bg-crimson w-16 mb-3"></div>
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between pb-4 gap-3">
+        <div>
+          <p class="text-[11px] uppercase tracking-[0.18em] text-muted font-semibold mb-1">Daily Analytical Prose Studio</p>
+          <h1 class="font-editorial text-2xl sm:text-3xl font-semibold tracking-tight text-ink">
+            The Editorial Desk
+          </h1>
+        </div>
+        <div class="flex items-center gap-4 text-xs text-muted">
+          <span id="current-date-display" class="font-medium"></span>
+          <span class="text-rule">|</span>
+          <span id="streak-counter" class="font-medium text-ink">0 Saved Editions</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex space-x-6 sm:space-x-8 border-t border-rule/60 pt-2.5 overflow-x-auto" aria-label="Tabs">
+        <button onclick="switchTab('practice')" id="tab-practice" class="tab-btn pb-2.5 text-xs sm:text-sm font-semibold uppercase tracking-wider border-b-2 border-crimson text-ink whitespace-nowrap transition-colors">
+          1. Daily Practice
+        </button>
+        <button onclick="switchTab('archive')" id="tab-archive" class="tab-btn pb-2.5 text-xs sm:text-sm font-medium uppercase tracking-wider border-b-2 border-transparent text-muted hover:text-ink whitespace-nowrap transition-colors">
+          2. Archive &amp; History
+        </button>
+        <button onclick="switchTab('guide')" id="tab-guide" class="tab-btn pb-2.5 text-xs sm:text-sm font-medium uppercase tracking-wider border-b-2 border-transparent text-muted hover:text-ink whitespace-nowrap transition-colors">
+          3. Style Guide &amp; Lexicon
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Toast Notification Banner -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden transform transition-all duration-200">
+    <div class="bg-ink text-paper px-4 py-3 rounded shadow-lg border border-rule/20 text-xs font-medium flex items-center gap-3">
+      <span class="w-2 h-2 rounded-full bg-crimson inline-block"></span>
+      <span id="toast-message">Action completed.</span>
+    </div>
+  </div>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: DAILY PRACTICE WORKSPACE            -->
+    <!-- ========================================== -->
+    <section id="view-practice" class="space-y-8">
+      
+      <!-- Prompt Control Bar -->
+      <div class="bg-paperAlt border border-rule rounded p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="space-y-1">
+          <div class="flex flex-wrap items-center gap-2">
+            <span id="prompt-badge" class="inline-block bg-crimson text-white text-[10px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-sm">
+              Today's Dispatch
+            </span>
+            <span id="prompt-category" class="text-xs font-semibold uppercase tracking-wider text-muted">
+              Macroeconomics
+            </span>
+            <span class="text-rule">&bull;</span>
+            <span id="prompt-difficulty" class="text-xs text-muted">
+              Standard Register
+            </span>
+          </div>
+          <p class="text-xs text-muted">
+            Complete all three stages below. Aim for active verbs, minimal prepositions, and crisp transitions.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 shrink-0">
+          <select id="prompt-selector" onchange="selectPromptByIndex(this.value)" class="bg-paper border border-rule text-ink text-xs font-medium rounded px-3 py-2 cursor-pointer">
+            <!-- Populated via JS -->
+          </select>
+          <button onclick="loadRandomPrompt()" class="bg-paper hover:bg-white border border-rule text-ink text-xs font-semibold px-3 py-2 rounded transition-colors">
+            Random Prompt
+          </button>
+          <button onclick="resetCurrentWorkspace()" class="text-muted hover:text-ink text-xs font-medium px-2.5 py-2 transition-colors">
+            Clear
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 1: FRENCH TO ENGLISH TRANSLATION -->
+      <article class="bg-white border border-rule rounded p-5 sm:p-7 shadow-[0_1px_2px_rgba(0,0,0,0.03)] space-y-4">
+        <div class="flex items-center justify-between border-b border-rule pb-3">
+          <div>
+            <span class="text-[11px] font-semibold uppercase tracking-widest text-crimson block">Step 01</span>
+            <h2 class="font-editorial text-xl font-semibold text-ink">French-to-English Translation</h2>
+          </div>
+          <span class="text-xs text-muted font-medium" id="step1-wordcount">0 words</span>
+        </div>
+
+        <!-- French Source Quote -->
+        <blockquote class="border-l-2 border-crimson pl-4 py-1 my-2 bg-paper/60 rounded-r">
+          <p class="text-[11px] uppercase tracking-wider text-muted font-semibold mb-1">Source Dispatch (French)</p>
+          <p id="french-prompt-text" class="font-editorial text-lg sm:text-xl text-ink leading-relaxed">
+            <!-- Populated by JS -->
+          </p>
+        </blockquote>
+
+        <div class="space-y-1.5">
+          <label for="step1-input" class="block text-xs font-medium text-muted">
+            Your initial accurate English translation (focus on capturing full meaning and natural English syntax):
+          </label>
+          <textarea id="step1-input" rows="3" oninput="updateWordCounts()" placeholder="Draft your English translation here..." class="w-full bg-paper border border-rule rounded p-3.5 font-editorial text-base sm:text-lg text-ink leading-relaxed resize-y transition-colors"></textarea>
+        </div>
+      </article>
+
+      <!-- STEP 2: CONDENSED & IMPROVED VERSION -->
+      <article class="bg-white border border-rule rounded p-5 sm:p-7 shadow-[0_1px_2px_rgba(0,0,0,0.03)] space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-rule pb-3 gap-2">
+          <div>
+            <span class="text-[11px] font-semibold uppercase tracking-widest text-crimson block">Step 02</span>
+            <h2 class="font-editorial text-xl font-semibold text-ink">The 30% Cut &amp; Editorial Upgrade</h2>
+          </div>
+          <div class="flex items-center gap-3 text-xs">
+            <span id="step2-wordcount" class="font-medium text-muted">0 words</span>
+            <span id="trim-badge" class="px-2 py-0.5 rounded bg-paperAlt border border-rule text-muted font-medium">
+              0% trimmed
+            </span>
+          </div>
+        </div>
+
+        <div class="text-xs text-muted bg-paperAlt/70 border border-rule/70 rounded px-3.5 py-2.5 flex flex-wrap items-center justify-between gap-2">
+          <span><strong>Editorial Brief:</strong> Cut filler adverbs, replace nominalizations (<em>-tion/-ment</em>) with concrete verbs, and tighten rhythm.</span>
+          <button onclick="copyStep1ToStep2()" class="text-crimson hover:text-crimsonDark font-semibold underline underline-offset-2 shrink-0">
+            Copy Step 1 draft down
+          </button>
+        </div>
+
+        <div class="space-y-1.5">
+          <label for="step2-input" class="block text-xs font-medium text-muted">
+            Your tightened, Economist / Guardian-ready rewrite:
+          </label>
+          <textarea id="step2-input" rows="3" oninput="updateWordCounts()" placeholder="Refine and compress your translation into crisp journalistic prose..." class="w-full bg-paper border border-rule rounded p-3.5 font-editorial text-base sm:text-lg text-ink leading-relaxed resize-y transition-colors"></textarea>
+        </div>
+      </article>
+
+      <!-- STEP 3: SENTENCE-COMBINING TASK -->
+      <article class="bg-white border border-rule rounded p-5 sm:p-7 shadow-[0_1px_2px_rgba(0,0,0,0.03)] space-y-4">
+        <div class="flex items-center justify-between border-b border-rule pb-3">
+          <div>
+            <span class="text-[11px] font-semibold uppercase tracking-widest text-crimson block">Step 03</span>
+            <h2 class="font-editorial text-xl font-semibold text-ink">Syntactic Compression (Sentence Combining)</h2>
+          </div>
+          <span class="text-xs text-muted font-medium" id="step3-wordcount">0 words</span>
+        </div>
+
+        <div class="bg-paper border border-rule rounded p-4 space-y-2">
+          <p class="text-[11px] uppercase tracking-wider text-muted font-semibold">Raw Disconnected Facts</p>
+          <ul id="combining-facts-list" class="list-disc list-inside space-y-1 font-editorial text-base text-ink">
+            <!-- Populated via JS -->
+          </ul>
+        </div>
+
+        <div class="space-y-1.5">
+          <label for="step3-input" class="block text-xs font-medium text-muted">
+            Synthesize these facts into <strong>one single authoritative sentence</strong> using an appositive, participial phrase, or pivot transition (e.g., <em>For all..., Yet, Crucially</em>):
+          </label>
+          <textarea id="step3-input" rows="2" oninput="updateWordCounts()" placeholder="Combine the facts into one seamless sentence..." class="w-full bg-paper border border-rule rounded p-3.5 font-editorial text-base sm:text-lg text-ink leading-relaxed resize-y transition-colors"></textarea>
+        </div>
+      </article>
+
+      <!-- ACTION BAR: REVEAL MODEL ANSWERS, AI CRITIQUE, & SAVE -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
+        <div class="flex flex-wrap items-center gap-3">
+          <button onclick="toggleModelAnswers()" id="btn-reveal-models" class="bg-ink hover:bg-slateAccent text-paper text-xs font-semibold uppercase tracking-wider px-5 py-3 rounded transition-colors">
+            Reveal Model Corrections &amp; Compare
+          </button>
+          <button onclick="runAiCritique()" id="btn-ai-critique" class="bg-paper hover:bg-white border border-ink text-ink text-xs font-semibold uppercase tracking-wider px-4 py-3 rounded transition-colors">
+            Get Instant Editor Critique
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="copySessionForExternalAI()" class="bg-paper hover:bg-white border border-rule text-ink text-xs font-medium px-3.5 py-3 rounded transition-colors" title="Copies your prompt and answers formatted for pasting into Gemini">
+            Copy for Gemini Chat
+          </button>
+          <button onclick="saveCurrentSession()" class="bg-crimson hover:bg-crimsonDark text-white text-xs font-semibold uppercase tracking-wider px-5 py-3 rounded transition-colors">
+            Save to Archive
+          </button>
+        </div>
+      </div>
+
+      <!-- OPTIONAL AI CRITIQUE PANEL -->
+      <div id="ai-critique-panel" class="hidden bg-white border-l-4 border-slateAccent border-y border-r border-rule rounded p-5 sm:p-7 space-y-3">
+        <div class="flex items-center justify-between border-b border-rule pb-2.5">
+          <div>
+            <span class="text-[10px] font-semibold uppercase tracking-widest text-muted block">Automated Desk Review</span>
+            <h3 class="font-editorial text-lg font-semibold text-ink">Sub-Editor's Feedback on Your Drafts</h3>
+          </div>
+          <button onclick="document.getElementById('ai-critique-panel').classList.add('hidden')" class="text-xs text-muted hover:text-ink">Close</button>
+        </div>
+        <div id="ai-critique-content" class="text-sm text-ink leading-relaxed space-y-3 font-sans">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- MODEL CORRECTIONS & COMPARISON PANEL -->
+      <div id="model-answers-panel" class="hidden bg-paperAlt border border-rule rounded p-5 sm:p-7 space-y-6">
+        <div class="flex items-center justify-between border-b border-rule pb-3">
+          <div>
+            <span class="text-[11px] font-semibold uppercase tracking-widest text-crimson block">Editorial Key</span>
+            <h3 class="font-editorial text-xl font-semibold text-ink">Model Corrections &amp; Stylistic Notes</h3>
+          </div>
+          <button onclick="toggleModelAnswers()" class="text-xs font-medium text-muted hover:text-ink underline">Hide Key</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Model Step 1 -->
+          <div class="bg-white border border-rule rounded p-4 space-y-2">
+            <span class="text-[10px] font-semibold uppercase tracking-widest text-muted">01. Standard Accurate Translation</span>
+            <p id="model-step1-text" class="font-editorial text-base text-ink leading-relaxed"></p>
+          </div>
+
+          <!-- Model Step 2 -->
+          <div class="bg-white border-l-2 border-crimson border-y border-r border-rule rounded p-4 space-y-2">
+            <span class="text-[10px] font-semibold uppercase tracking-widest text-crimson">02. Economist / Guardian Condensed Rewrite</span>
+            <p id="model-step2-text" class="font-editorial text-base font-medium text-ink leading-relaxed"></p>
+          </div>
+        </div>
+
+        <!-- Model Step 3 -->
+        <div class="bg-white border border-rule rounded p-4 space-y-2">
+          <span class="text-[10px] font-semibold uppercase tracking-widest text-muted">03. Model Synthesized Sentence</span>
+          <p id="model-step3-text" class="font-editorial text-base text-ink leading-relaxed"></p>
+        </div>
+
+        <!-- Editorial Commentary -->
+        <div class="bg-paper border border-rule rounded p-4 space-y-1.5">
+          <span class="text-[10px] font-semibold uppercase tracking-widest text-ink">Why This Works (Sub-Editor's Notes)</span>
+          <p id="model-notes-text" class="text-xs sm:text-sm text-muted leading-relaxed"></p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: ARCHIVE & HISTORY                   -->
+    <!-- ========================================== -->
+    <section id="view-archive" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-rule pb-4 gap-4">
+        <div>
+          <span class="text-[11px] font-semibold uppercase tracking-widest text-crimson block">Persistent Folio</span>
+          <h2 class="font-editorial text-2xl font-semibold text-ink">Saved Practice Editions</h2>
+          <p class="text-xs text-muted mt-1">All sessions are stored locally in your browser. Export as Markdown or JSON to share or back up.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="exportAllMarkdown()" class="bg-ink hover:bg-slateAccent text-paper text-xs font-semibold px-3.5 py-2 rounded transition-colors">
+            Export All (.md)
+          </button>
+          <button onclick="exportAllJSON()" class="bg-paper hover:bg-white border border-rule text-ink text-xs font-medium px-3.5 py-2 rounded transition-colors">
+            Backup JSON
+          </button>
+          <label class="bg-paper hover:bg-white border border-rule text-ink text-xs font-medium px-3.5 py-2 rounded transition-colors cursor-pointer">
+            Import JSON
+            <input type="file" accept=".json" onchange="importJSON(event)" class="hidden" />
+          </label>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div id="archive-empty" class="bg-white border border-rule rounded p-10 text-center space-y-3">
+        <p class="font-editorial text-lg text-ink">No editions archived yet.</p>
+        <p class="text-xs text-muted max-w-md mx-auto">Complete a daily translation and condensation exercise in the workspace, then click "Save to Archive" to track your progress over time.</p>
+        <button onclick="switchTab('practice')" class="mt-2 inline-block bg-crimson text-white text-xs font-semibold uppercase tracking-wider px-4 py-2 rounded">
+          Return to Workspace
+        </button>
+      </div>
+
+      <!-- Saved Entries List -->
+      <div id="archive-list" class="space-y-5">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: STYLE GUIDE & LEXICON               -->
+    <!-- ========================================== -->
+    <section id="view-guide" class="hidden space-y-8">
+      
+      <!-- Part A: The 4 Core Principles -->
+      <div class="space-y-4">
+        <div class="border-b border-rule pb-3">
+          <span class="text-[11px] font-semibold uppercase tracking-widest text-crimson block">House Style</span>
+          <h2 class="font-editorial text-2xl font-semibold text-ink">Core Principles of British Analytical Journalism</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white border border-rule rounded p-5 space-y-2">
+            <span class="text-xs font-semibold text-crimson uppercase tracking-wider">01. Concrete Verbs Over Weak Nouns</span>
+            <p class="text-xs text-muted leading-relaxed">
+              Eliminate nominalizations (nouns ending in <em>-tion, -ment, -ance</em>) whenever a direct verb can carry the action.
+            </p>
+            <div class="bg-paper p-3 rounded border border-rule/70 text-xs space-y-1">
+              <p class="text-muted"><span class="font-semibold text-ink">Avoid:</span> "The ministry made an announcement regarding the implementation of cuts."</p>
+              <p class="text-ink"><span class="font-semibold text-crimson">Editorial:</span> "The ministry announced spending cuts."</p>
+            </div>
+          </div>
+
+          <div class="bg-white border border-rule rounded p-5 space-y-2">
+            <span class="text-xs font-semibold text-crimson uppercase tracking-wider">02. Front-Load the Contrast</span>
+            <p class="text-xs text-muted leading-relaxed">
+              Analytical writing thrives on nuance and tension. Use crisp pivot markers—<em>yet, however, still, nonetheless, by contrast, for all X</em>—to turn a sentence cleanly.
+            </p>
+            <div class="bg-paper p-3 rounded border border-rule/70 text-xs space-y-1">
+              <p class="text-ink"><span class="font-semibold text-crimson">Editorial:</span> "The policy looks generous on paper; in practice, few households will qualify."</p>
+            </div>
+          </div>
+
+          <div class="bg-white border border-rule rounded p-5 space-y-2">
+            <span class="text-xs font-semibold text-crimson uppercase tracking-wider">03. Understatement &amp; Precision</span>
+            <p class="text-xs text-muted leading-relaxed">
+              Shun exclamation marks and inflated adjectives (<em>massive, terrible, incredible</em>). Favor diagnostic terms (<em>acute, negligible, protracted, ill-conceived</em>).
+            </p>
+            <div class="bg-paper p-3 rounded border border-rule/70 text-xs space-y-1">
+              <p class="text-ink"><span class="font-semibold text-crimson">Editorial:</span> "The delay proved costly, leaving the regulator exposed to legal challenges."</p>
+            </div>
+          </div>
+
+          <div class="bg-white border border-rule rounded p-5 space-y-2">
+            <span class="text-xs font-semibold text-crimson uppercase tracking-wider">04. Sentence Cadence</span>
+            <p class="text-xs text-muted leading-relaxed">
+              Follow a dense, clause-rich analytical sentence with a short, declarative punch. Contrast in length creates authority and keeps complex arguments readable.
+            </p>
+            <div class="bg-paper p-3 rounded border border-rule/70 text-xs space-y-1">
+              <p class="text-ink"><span class="font-semibold text-crimson">Editorial:</span> "Having spent billions subsidizing legacy factories, ministers expected swift job creation. They were disappointed."</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Part B: Daily Training Drills -->
+      <div class="bg-paperAlt border border-rule rounded p-5 sm:p-6 space-y-3">
+        <h3 class="font-editorial text-lg font-semibold text-ink">Daily Training Routine</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+          <div class="bg-white border border-rule rounded p-3.5 space-y-1">
+            <p class="font-semibold text-ink">The 30% Cut Drill</p>
+            <p class="text-muted leading-relaxed">Edit a 150-word draft down to 100 words without losing a single fact. Delete adverbs (<em>very, actually</em>) and wordy prepositions.</p>
+          </div>
+          <div class="bg-white border border-rule rounded p-3.5 space-y-1">
+            <p class="font-semibold text-ink">Syntactic Compression</p>
+            <p class="text-muted leading-relaxed">Merge two or three choppy facts into one fluid sentence using an opening participial phrase or appositive.</p>
+          </div>
+          <div class="bg-white border border-rule rounded p-3.5 space-y-1">
+            <p class="font-semibold text-ink">Reverse-Engineering</p>
+            <p class="text-muted leading-relaxed">Read an <em>Economist</em> Leader and highlight every sentence-opening transition and main verb. Notice how rarely <em>to be</em> is the main verb.</p>
+          </div>
+          <div class="bg-white border border-rule rounded p-3.5 space-y-1">
+            <p class="font-semibold text-ink">No-Jargon Translation</p>
+            <p class="text-muted leading-relaxed">Explain a technical financial or legal mechanism in plain, vivid English accessible to an intelligent layperson.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Part C: Searchable & Filterable 20-Word Lexicon -->
+      <div class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-rule pb-3 gap-3">
+          <div>
+            <span class="text-[11px] font-semibold uppercase tracking-widest text-crimson block">Essential Vocabulary</span>
+            <h2 class="font-editorial text-2xl font-semibold text-ink">High-Utility Analytical Lexicon (20 Terms)</h2>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <input type="text" id="lexicon-search" oninput="filterLexicon()" placeholder="Search term or French note..." class="bg-white border border-rule rounded px-3 py-1.5 text-xs text-ink w-48 sm:w-56" />
+            <select id="lexicon-filter" onchange="filterLexicon()" class="bg-white border border-rule rounded px-3 py-1.5 text-xs text-ink">
+              <option value="all">All Categories (20)</option>
+              <option value="Verb">Analytical Verbs (8)</option>
+              <option value="Noun">Precision Nouns (6)</option>
+              <option value="Transition">Transitions &amp; Pivots (6)</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="lexicon-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Minimalist Footer -->
+  <footer class="border-t border-rule bg-paperAlt/50 mt-12 py-5">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between text-xs text-muted gap-2">
+      <p>The Editorial Desk &mdash; Built for disciplined journalistic English practice.</p>
+      <p>Stored locally in your browser &bull; Zero tracking</p>
+    </div>
+  </footer>
+
+  <script>
+    // =========================================================================
+    // 1. CURATED PROMPT BANK (FRENCH DISPATCHES + FACTS + EDITORIAL KEYS)
+    // =========================================================================
+    const PROMPTS = [
+      {
+        id: "econ-01",
+        category: "Macroeconomics",
+        difficulty: "Standard",
+        french: "Bien que l'inflation ait ralenti ces derniers mois, la banque centrale hésite encore à abaisser ses taux d'intérêt, craignant une résurgence des pressions salariales.",
+        facts: [
+          "European inflation cooled in the third quarter.",
+          "The central bank refused to cut borrowing costs.",
+          "Policymakers fear rapid wage growth could reignite price pressures."
+        ],
+        modelStep1: "Although inflation has slowed down in recent months, the central bank is still hesitant to lower its interest rates, fearing a resurgence of wage pressures.",
+        modelStep2: "Even as inflation cools, the central bank has balked at cutting rates, wary that rising wages could reignite price pressures.",
+        modelStep3: "Despite cooling inflation in the third quarter, the central bank held borrowing costs steady, wary that brisk wage growth could reignite price pressures.",
+        notes: "Notice how 'is still hesitant to lower' becomes the sharper verb 'has balked at cutting'. Replacing 'fearing a resurgence of' with 'wary that... could reignite' cuts nominalizations and gives the sentence Economist-style momentum."
+      },
+      {
+        id: "pol-01",
+        category: "European Politics",
+        difficulty: "Analytical",
+        french: "Malgré ses promesses répétées de réformer le système des retraites, le gouvernement se heurte aujourd'hui à une opposition farouche des syndicats comme de l'opinion publique.",
+        facts: [
+          "The government pledged repeatedly to overhaul the pension system.",
+          "Trade unions have organized nationwide strikes.",
+          "Public support for the bill has collapsed."
+        ],
+        modelStep1: "Despite its repeated promises to reform the pension system, the government is now facing fierce opposition from both trade unions and public opinion.",
+        modelStep2: "For all its pledges to overhaul pensions, the government now faces stiff resistance from unions and voters alike.",
+        modelStep3: "For all its repeated pledges to overhaul the pension system, the government now faces nationwide union strikes alongside collapsing public support.",
+        notes: "'For all its pledges' is a classic Economist pivot that replaces the heavier 'Despite its repeated promises'. Changing 'public opinion' to 'voters' makes the actors concrete."
+      },
+      {
+        id: "tech-01",
+        category: "Technology & Regulation",
+        difficulty: "Standard",
+        french: "Longtemps perçues comme de simples outils de productivité, les intelligences artificielles génératives bouleversent désormais des professions entières, du droit au journalisme.",
+        facts: [
+          "Generative AI was initially viewed as a basic productivity tool.",
+          "The technology has improved rapidly over two years.",
+          "It is now disrupting white-collar fields from law to journalism."
+        ],
+        modelStep1: "Long perceived as mere productivity tools, generative artificial intelligences are now disrupting entire professions, from law to journalism.",
+        modelStep2: "Once dismissed as mere productivity aids, generative AI is now upending white-collar professions from law to journalism.",
+        modelStep3: "Once viewed as a mere productivity tool, generative AI has advanced rapidly over the past two years, upending white-collar fields from law to journalism.",
+        notes: "In English, 'artificial intelligence' is uncountable—never write 'artificial intelligences'. Upgrading 'disrupting' to 'upending' avoids Silicon Valley cliché while retaining precision."
+      },
+      {
+        id: "energy-01",
+        category: "Energy & Climate",
+        difficulty: "Advanced",
+        french: "La crise énergétique a contraint les pays européens à accélérer leurs investissements dans les énergies renouvelables, même si le manque de réseaux électriques freine encore cette transition.",
+        facts: [
+          "The energy crisis forced Europe to boost renewable investments.",
+          "Solar and wind capacity hit record highs last year.",
+          "Outdated power grids still bottleneck the green transition."
+        ],
+        modelStep1: "The energy crisis forced European countries to accelerate their investments in renewable energy, even though the lack of power grids is still slowing down this transition.",
+        modelStep2: "The energy crunch galvanized Europe into ramping up green investment, yet inadequate power grids still curb the transition.",
+        modelStep3: "Galvanized by the energy crisis into boosting renewable investment to record highs, Europe nonetheless finds its green transition bottlenecked by outdated power grids.",
+        notes: "'Galvanized... into' captures both the shock and the sudden action in two words. Replacing 'is still slowing down' with 'still curb' eliminates passive/progressive bulk."
+      },
+      {
+        id: "trade-01",
+        category: "Global Trade",
+        difficulty: "Standard",
+        french: "Les droits de douane imposés sur les véhicules électriques étrangers visent à protéger l'industrie locale, mais ils risquent surtout de renchérir les prix pour les consommateurs.",
+        facts: [
+          "Lawmakers imposed steep tariffs on foreign electric vehicles.",
+          "The measure aims to shield domestic automakers.",
+          "Consumers are likely to bear the brunt through higher prices."
+        ],
+        modelStep1: "The tariffs imposed on foreign electric vehicles aim to protect local industry, but they mainly risk raising prices for consumers.",
+        modelStep2: "Tariffs on foreign electric cars are meant to shield domestic automakers; in practice, they risk inflating prices for consumers.",
+        modelStep3: "Intended to shield domestic automakers, steep tariffs on foreign electric vehicles are instead likely to leave consumers bearing the brunt of higher prices.",
+        notes: "Replacing ', but they mainly risk' with a semicolon and 'in practice,' creates a sharper analytical contrast between intention and outcome."
+      },
+      {
+        id: "soc-01",
+        category: "Demographics & Society",
+        difficulty: "Analytical",
+        french: "Le vieillissement rapide de la population pèse lourdement sur les finances publiques, obligeant les dirigeants à choisir entre une hausse des impôts et une réduction des prestations sociales.",
+        facts: [
+          "The population is aging rapidly.",
+          "Public finances are under mounting strain.",
+          "Leaders must choose between raising taxes and cutting welfare benefits."
+        ],
+        modelStep1: "The rapid aging of the population weighs heavily on public finances, forcing leaders to choose between a tax hike and a reduction in social benefits.",
+        modelStep2: "Rapid demographic aging is straining public coffers, leaving leaders a stark choice between raising taxes and trimming welfare.",
+        modelStep3: "As rapid demographic aging places mounting strain on public finances, leaders face a stark choice between raising taxes and trimming welfare benefits.",
+        notes: "Notice how 'a tax hike and a reduction in social benefits' (noun-heavy) transforms into parallel gerunds: 'raising taxes and trimming welfare'."
+      },
+      {
+        id: "corp-01",
+        category: "Business & Finance",
+        difficulty: "Standard",
+        french: "Après une décennie de croissance spectaculaire, le géant du commerce en ligne voit ses marges s'éroder face à l'arrivée de concurrents à bas prix.",
+        facts: [
+          "The e-commerce giant enjoyed a decade of rapid growth.",
+          "Low-cost rivals entered the market aggressively.",
+          "The company's profit margins have steadily eroded."
+        ],
+        modelStep1: "After a decade of spectacular growth, the e-commerce giant is seeing its margins erode in the face of the arrival of low-cost competitors.",
+        modelStep2: "After a decade of breakneck growth, the e-commerce giant's margins are eroding under pressure from low-cost rivals.",
+        modelStep3: "Following a decade of rapid growth, the e-commerce giant has seen its profit margins steadily erode as low-cost rivals aggressively enter the market.",
+        notes: "'In the face of the arrival of' is classic French-influenced clutter ('face à l'arrivée de'). Compressing it to 'under pressure from low-cost rivals' cuts six words cleanly."
+      },
+      {
+        id: "dip-01",
+        category: "Geopolitics",
+        difficulty: "Advanced",
+        french: "Les négociations de paix ont finalement échoué, aucune des deux parties n'ayant accepté de faire la première concession territoriale.",
+        facts: [
+          "Peace talks lasted for three weeks.",
+          "Neither side agreed to make the first territorial concession.",
+          "The negotiations collapsed on Friday."
+        ],
+        modelStep1: "The peace negotiations finally failed, as neither side agreed to make the first territorial concession.",
+        modelStep2: "Peace talks collapsed after both sides refused to make the first territorial concession.",
+        modelStep3: "After three weeks of deadlock, peace talks collapsed on Friday when neither side agreed to make the first territorial concession.",
+        notes: "'Talks collapsed' is far punchier than 'negotiations finally failed', and flipping the negative ('aucune... n'ayant accepté') into an active positive ('both sides refused') sharpens the syntax."
+      },
+      {
+        id: "urban-01",
+        category: "Housing & Cities",
+        difficulty: "Standard",
+        french: "Conçue pour faciliter l'accès au logement, l'encadrement des loyers a produit l'effet inverse en dissuadant les propriétaires de mettre leurs biens sur le marché.",
+        facts: [
+          "The city introduced strict rent controls.",
+          "The policy was meant to make housing more affordable.",
+          "Landlords pulled properties off the market, shrinking supply."
+        ],
+        modelStep1: "Designed to facilitate access to housing, rent control has produced the opposite effect by dissuading landlords from putting their properties on the market.",
+        modelStep2: "Intended to ease the housing crunch, rent controls have backfired, prompting landlords to pull properties off the market.",
+        modelStep3: "Introduced to make housing more affordable, strict rent controls have instead shrunk supply as landlords pull properties off the market.",
+        notes: "'Produced the opposite effect' is wordy; 'backfired' captures the irony in a single verb."
+      },
+      {
+        id: "health-01",
+        category: "Public Policy",
+        difficulty: "Analytical",
+        french: "Les subventions publiques ne sauraient constituer une panacée face au déclin industriel si elles ne s'accompagnent pas d'une réforme profonde de la formation professionnelle.",
+        facts: [
+          "Ministers are offering generous industrial subsidies.",
+          "Vocational training systems remain outdated.",
+          "Subsidies alone will not reverse industrial decline."
+        ],
+        modelStep1: "Public subsidies cannot constitute a panacea for industrial decline if they are not accompanied by a deep reform of vocational training.",
+        modelStep2: "Public subsidies are no panacea for industrial decline unless paired with deep reforms to vocational training.",
+        modelStep3: "Generous though they are, industrial subsidies will prove no panacea for manufacturing decline unless paired with an overhaul of outdated vocational training.",
+        notes: "'Ne sauraient constituer' translates best as 'are no' or 'will prove no' rather than the clunky 'cannot constitute'. 'Unless paired with' tightens 'if they are not accompanied by'."
+      }
+    ];
+
+    // =========================================================================
+    // 2. CURATED 20-WORD JOURNALISTIC LEXICON
+    // =========================================================================
+    const LEXICON = [
+      {
+        term: "To underscore",
+        category: "Verb",
+        meaning: "To emphasize or highlight a point, typically backed by evidence or events.",
+        example: "The latest inflation figures underscore the central bank's dilemma.",
+        frenchNote: "Replaces literal 'souligner' (to underline/emphasize) in analytical contexts."
+      },
+      {
+        term: "To balk (at)",
+        category: "Verb",
+        meaning: "To hesitate or refuse to accept something difficult, costly, or unpleasant.",
+        example: "Voters have repeatedly balked at higher fuel taxes.",
+        frenchNote: "Far sharper than 'hésiter à accepter' or 'refuser'."
+      },
+      {
+        term: "To temper",
+        category: "Verb",
+        meaning: "To moderate, soften, or balance an expectation, forecast, or emotion.",
+        example: "Strong job growth has tempered fears of an imminent recession.",
+        frenchNote: "Avoid translating 'modérer' literally when 'temper' conveys analytical restraint."
+      },
+      {
+        term: "To galvanize",
+        category: "Verb",
+        meaning: "To shock or jolt someone into taking sudden, decisive action.",
+        example: "The energy crisis galvanized European governments into accelerating wind projects.",
+        frenchNote: "Often followed by 'into + -ing verb'."
+      },
+      {
+        term: "To erode",
+        category: "Verb",
+        meaning: "To gradually wear away trust, profit margins, authority, or support.",
+        example: "Years of missed targets have eroded public confidence in the agency.",
+        frenchNote: "Preferred over 'diminuer progressivement'."
+      },
+      {
+        term: "To curb",
+        category: "Verb",
+        meaning: "To restrain, limit, or keep something undesirable in check.",
+        example: "New regulations aim to curb speculative trading in housing markets.",
+        frenchNote: "Cleaner and punchier than 'limiter' or 'freiner'."
+      },
+      {
+        term: "To bolster",
+        category: "Verb",
+        meaning: "To support, strengthen, or prop up an argument, economy, or defense.",
+        example: "Exports bolstered the economy while domestic consumption stalled.",
+        frenchNote: "Stronger and more idiomatic than 'renforcer' or 'soutenir'."
+      },
+      {
+        term: "To portend",
+        category: "Verb",
+        meaning: "To serve as an omen or warning sign of a future development.",
+        example: "Falling factory orders rarely portend a smooth economic recovery.",
+        frenchNote: "Elevated journalistic verb replacing 'annoncer' or 'présager'."
+      },
+      {
+        term: "Bellwether",
+        category: "Noun",
+        meaning: "An indicator or early predictor of broader economic or political trends.",
+        example: "Luxury retail is often viewed as a bellwether for global consumer sentiment.",
+        frenchNote: "Replaces clunky phrases like 'indicateur avancé'."
+      },
+      {
+        term: "Watershed",
+        category: "Noun",
+        meaning: "A critical turning point after which conditions are permanently altered.",
+        example: "The ruling marks a watershed in how regulators police tech monopolies.",
+        frenchNote: "Use instead of 'tournant décisif' (avoid 'decisive turning point')."
+      },
+      {
+        term: "Headwind / Tailwind",
+        category: "Noun",
+        meaning: "External forces that hinder or accelerate economic or corporate progress.",
+        example: "Exporters face stiff headwinds from a stronger currency and sluggish demand.",
+        frenchNote: "Essential financial shorthand; pairs well with 'stiff' or 'mounting'."
+      },
+      {
+        term: "Quagmire",
+        category: "Noun",
+        meaning: "A complex, messy diplomatic or political situation that is hard to escape.",
+        example: "What began as a minor border dispute has hardened into a diplomatic quagmire.",
+        frenchNote: "Translates 'bourbier' in geopolitical reporting."
+      },
+      {
+        term: "Linchpin",
+        category: "Noun",
+        meaning: "The single vital element that holds an entire system or strategy together.",
+        example: "Semiconductors remain the linchpin of modern industrial strategy.",
+        frenchNote: "Translates 'clé de voûte' or 'pivot central'."
+      },
+      {
+        term: "Panacea",
+        category: "Noun",
+        meaning: "A supposed cure-all for complex problems—almost always used skeptically.",
+        example: "Subsidies are rarely a panacea for deeper structural inefficiencies.",
+        frenchNote: "Identical root to French 'panacée', usually paired with 'no' or 'rarely'."
+      },
+      {
+        term: "For all [X]...",
+        category: "Transition",
+        meaning: "Despite X; used at the start of a sentence to introduce a sharp contradiction.",
+        example: "For all its technological prowess, the firm struggles to turn a profit.",
+        frenchNote: "Much sleeker than 'Malgré tout...' or 'In spite of all...'."
+      },
+      {
+        term: "By the same token...",
+        category: "Transition",
+        meaning: "In a similar way; following the exact same logic or symmetry.",
+        example: "Low rates encourage borrowing; by the same token, they penalize savers.",
+        frenchNote: "Replaces 'De la même manière' or 'Par ailleurs' when drawing a logical parallel."
+      },
+      {
+        term: "Crucially,...",
+        category: "Transition",
+        meaning: "Used at the start of a sentence to isolate the single most decisive factor.",
+        example: "Crucially, the treaty includes no mechanism for enforcing compliance.",
+        frenchNote: "More authoritative than 'De manière cruciale' or 'Surtout'."
+      },
+      {
+        term: "In tandem (with)",
+        category: "Transition",
+        meaning: "Working closely together or moving simultaneously.",
+        example: "Wages must rise in tandem with productivity to avoid fueling inflation.",
+        frenchNote: "Replaces 'parallèlement à' or 'conjointement avec'."
+      },
+      {
+        term: "All told,...",
+        category: "Transition",
+        meaning: "Taking everything into account; a crisp alternative to 'in conclusion'.",
+        example: "All told, the reforms will cost taxpayers roughly €12 billion over five years.",
+        frenchNote: "Replaces 'Au total' or 'Tout bien considéré'."
+      },
+      {
+        term: "Even so,...",
+        category: "Transition",
+        meaning: "A sleek, two-word substitute for 'nevertheless' or 'despite that'.",
+        example: "Turnout was lower than expected. Even so, the incumbent claimed a clear mandate.",
+        frenchNote: "Ideal for short, punchy contrast sentences."
+      }
+    ];
+
+    // =========================================================================
+    // 3. STATE MANAGEMENT
+    // =========================================================================
+    let currentPromptIndex = 0;
+    let savedSessions = [];
+
+    // Initialize Application
+    window.onload = function () {
+      // Display today's date in editorial style
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('current-date-display').textContent = now.toLocaleDateString('en-GB', options);
+
+      // Load saved sessions from localStorage
+      loadSavedSessions();
+
+      // Populate prompt dropdown
+      populatePromptSelector();
+
+      // Pick deterministic daily prompt based on day of year
+      const startOfYear = new Date(now.getFullYear(), 0, 0);
+      const diff = now - startOfYear;
+      const oneDay = 1000 * 60 * 60 * 24;
+      const dayOfYear = Math.floor(diff / oneDay);
+      currentPromptIndex = dayOfYear % PROMPTS.length;
+
+      loadPrompt(currentPromptIndex, true);
+      renderLexicon(LEXICON);
+    };
+
+    function populatePromptSelector() {
+      const select = document.getElementById('prompt-selector');
+      select.innerHTML = '';
+      PROMPTS.forEach((p, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = `Dispatch #${idx + 1}: ${p.category}`;
+        select.appendChild(opt);
+      });
+    }
+
+    function loadPrompt(index, isDaily = false) {
+      currentPromptIndex = Number(index);
+      const p = PROMPTS[currentPromptIndex];
+      document.getElementById('prompt-selector').value = currentPromptIndex;
+
+      document.getElementById('prompt-badge').textContent = isDaily ? "Today's Dispatch" : `Archive Dispatch #${currentPromptIndex + 1}`;
+      document.getElementById('prompt-category').textContent = p.category;
+      document.getElementById('prompt-difficulty').textContent = p.difficulty;
+      document.getElementById('french-prompt-text').textContent = `« ${p.french} »`;
+
+      // Render Step 3 disconnected facts
+      const factsList = document.getElementById('combining-facts-list');
+      factsList.innerHTML = '';
+      p.facts.forEach(fact => {
+        const li = document.createElement('li');
+        li.textContent = fact;
+        factsList.appendChild(li);
+      });
+
+      // Populate Model Answer panel (hidden by default)
+      document.getElementById('model-step1-text').textContent = p.modelStep1;
+      document.getElementById('model-step2-text').textContent = p.modelStep2;
+      document.getElementById('model-step3-text').textContent = p.modelStep3;
+      document.getElementById('model-notes-text').textContent = p.notes;
+
+      // Reset inputs & hide panels
+      resetCurrentWorkspace(false);
+    }
+
+    function selectPromptByIndex(idx) {
+      loadPrompt(idx, false);
+    }
+
+    function loadRandomPrompt() {
+      let nextIdx = Math.floor(Math.random() * PROMPTS.length);
+      if (nextIdx === currentPromptIndex && PROMPTS.length > 1) {
+        nextIdx = (nextIdx + 1) % PROMPTS.length;
+      }
+      loadPrompt(nextIdx, false);
+      showToast("Loaded a new editorial prompt.");
+    }
+
+    function resetCurrentWorkspace(notify = true) {
+      document.getElementById('step1-input').value = '';
+      document.getElementById('step2-input').value = '';
+      document.getElementById('step3-input').value = '';
+      document.getElementById('model-answers-panel').classList.add('hidden');
+      document.getElementById('ai-critique-panel').classList.add('hidden');
+      document.getElementById('btn-reveal-models').textContent = 'Reveal Model Corrections & Compare';
+      updateWordCounts();
+      if (notify) showToast("Workspace cleared.");
+    }
+
+    // =========================================================================
+    // 4. WORD COUNTS & 30% TRIM CALCULATOR
+    // =========================================================================
+    function countWords(str) {
+      const trimmed = str.trim();
+      if (!trimmed) return 0;
+      return trimmed.split(/\s+/).length;
+    }
+
+    function updateWordCounts() {
+      const w1 = countWords(document.getElementById('step1-input').value);
+      const w2 = countWords(document.getElementById('step2-input').value);
+      const w3 = countWords(document.getElementById('step3-input').value);
+
+      document.getElementById('step1-wordcount').textContent = `${w1} ${w1 === 1 ? 'word' : 'words'}`;
+      document.getElementById('step2-wordcount').textContent = `${w2} ${w2 === 1 ? 'word' : 'words'}`;
+      document.getElementById('step3-wordcount').textContent = `${w3} ${w3 === 1 ? 'word' : 'words'}`;
+
+      const badge = document.getElementById('trim-badge');
+      if (w1 > 0 && w2 > 0) {
+        const diffPercent = Math.round(((w1 - w2) / w1) * 100);
+        if (diffPercent > 0) {
+          badge.textContent = `${diffPercent}% trimmed`;
+          badge.className = diffPercent >= 20
+            ? 'px-2 py-0.5 rounded bg-ink text-paper font-semibold'
+            : 'px-2 py-0.5 rounded bg-paperAlt border border-rule text-ink font-medium';
+        } else if (diffPercent < 0) {
+          badge.textContent = `+${Math.abs(diffPercent)}% longer`;
+          badge.className = 'px-2 py-0.5 rounded bg-paperAlt border border-rule text-crimson font-medium';
+        } else {
+          badge.textContent = 'Same length';
+          badge.className = 'px-2 py-0.5 rounded bg-paperAlt border border-rule text-muted font-medium';
+        }
+      } else {
+        badge.textContent = '0% trimmed';
+        badge.className = 'px-2 py-0.5 rounded bg-paperAlt border border-rule text-muted font-medium';
+      }
+    }
+
+    function copyStep1ToStep2() {
+      const s1 = document.getElementById('step1-input').value;
+      if (!s1.trim()) {
+        showToast("Write your Step 1 translation first.");
+        return;
+      }
+      document.getElementById('step2-input').value = s1;
+      updateWordCounts();
+      document.getElementById('step2-input').focus();
+    }
+
+    function toggleModelAnswers() {
+      const panel = document.getElementById('model-answers-panel');
+      const btn = document.getElementById('btn-reveal-models');
+      const isHidden = panel.classList.contains('hidden');
+      if (isHidden) {
+        panel.classList.remove('hidden');
+        btn.textContent = 'Hide Model Corrections';
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        panel.classList.add('hidden');
+        btn.textContent = 'Reveal Model Corrections & Compare';
+      }
+    }
+
+    // =========================================================================
+    // 5. INSTANT GEMINI SUB-EDITOR CRITIQUE (OPTIONAL API CALL WITH FALLBACK)
+    // =========================================================================
+    async function runAiCritique() {
+      const p = PROMPTS[currentPromptIndex];
+      const s1 = document.getElementById('step1-input').value.trim();
+      const s2 = document.getElementById('step2-input').value.trim();
+      const s3 = document.getElementById('step3-input').value.trim();
+
+      if (!s1 && !s2 && !s3) {
+        showToast("Please draft at least one step before requesting a critique.");
+        return;
+      }
+
+      const panel = document.getElementById('ai-critique-panel');
+      const content = document.getElementById('ai-critique-content');
+      const btn = document.getElementById('btn-ai-critique');
+
+      panel.classList.remove('hidden');
+      content.innerHTML = `<p class="text-muted italic">Sub-editor is reviewing your copy...</p>`;
+      btn.disabled = true;
+      btn.classList.add('opacity-50');
+
+      const systemPrompt = "You are a senior sub-editor at The Economist. Critique the user's French-to-English journalistic writing exercise concisely, constructively, and strictly in plain HTML paragraphs (<p> and <strong> tags only, no markdown, no emojis). Focus on verb strength, elimination of French false friends or nominalizations, rhythmic cadence, and syntactic compression. Keep your entire review under 180 words.";
+      const userPrompt = `
+French Source: "${p.french}"
+Step 1 (Initial Translation): "${s1 || '[Left blank]'}"
+Step 2 (Condensed Upgrade): "${s2 || '[Left blank]'}"
+Disconnected Facts for Step 3: ${p.facts.join(' | ')}
+Step 3 (Synthesized Sentence): "${s3 || '[Left blank]'}"
+
+Evaluate each attempted step against Economist/Guardian house style and offer one specific upgrade tip.`;
+
+      try {
+        const apiKey = "";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+        const payload = {
+          contents: [{ parts: [{ text: userPrompt }] }],
+          systemInstruction: { parts: [{ text: systemPrompt }] }
+        };
+
+        let response;
+        let delay = 1000;
+        for (let attempt = 0; attempt < 3; attempt++) {
+          response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (response.ok) break;
+          await new Promise(res => setTimeout(res, delay));
+          delay *= 2;
+        }
+
+        if (!response || !response.ok) {
+          throw new Error("API unavailable");
+        }
+
+        const result = await response.json();
+        const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (text) {
+          content.innerHTML = text;
+        } else {
+          throw new Error("Empty response");
+        }
+      } catch (err) {
+        // Fallback local diagnostic heuristic if offline or no API key injected
+        content.innerHTML = generateLocalDiagnostic(s1, s2, s3, p);
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove('opacity-50');
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function generateLocalDiagnostic(s1, s2, s3, p) {
+      const notes = [];
+      const w1 = countWords(s1);
+      const w2 = countWords(s2);
+
+      if (s2) {
+        const trim = w1 > 0 ? Math.round(((w1 - w2) / w1) * 100) : 0;
+        if (trim >= 20) {
+          notes.push(`<p><strong>Compression:</strong> Strong discipline—you trimmed ${trim}% of the word count between Step 1 and Step 2.</p>`);
+        } else if (w1 > 0) {
+          notes.push(`<p><strong>Compression:</strong> You trimmed ${trim}%. Look for passive verbs (<em>is/was</em>) or prepositional chains (<em>of the / in order to</em>) to cut further.</p>`);
+        }
+        if (/\b(very|really|actually|basically|literally)\b/i.test(s2)) {
+          notes.push(`<p><strong>Diction Warning:</strong> Cut filler adverbs like <em>very</em> or <em>actually</em> from Step 2; let a sharper verb carry the weight.</p>`);
+        }
+        if (/!/.test(s2)) {
+          notes.push(`<p><strong>Punctuation:</strong> Remove exclamation marks—British analytical prose relies on understatement rather than typographic excitement.</p>`);
+        }
+      }
+      if (s3) {
+        const sentenceCount = s3.split(/[.!?]+/).filter(x => x.trim().length > 0).length;
+        if (sentenceCount > 1) {
+          notes.push(`<p><strong>Syntactic Compression (Step 3):</strong> You used ${sentenceCount} sentences. Try merging them into a single sentence using a semicolon, a participial phrase, or a pivot like <em>For all...</em>.</p>`);
+        } else {
+          notes.push(`<p><strong>Syntactic Compression (Step 3):</strong> Good structural control—you synthesized the facts into a single sentence. Compare your pivot phrasing against the Editorial Key below.</p>`);
+        }
+      }
+      if (notes.length === 0) {
+        notes.push(`<p>Compare your phrasing directly with the <strong>Editorial Key</strong> below, paying special attention to how concrete verbs replace French nominalizations.</p>`);
+      }
+      return notes.join('');
+    }
+
+    // =========================================================================
+    // 6. PERSISTENT STORAGE, ARCHIVE, & EXPORT / COPY
+    // =========================================================================
+    function loadSavedSessions() {
+      try {
+        const raw = localStorage.getItem('editorial_desk_archive_v1');
+        savedSessions = raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        savedSessions = [];
+      }
+      updateStreakCounter();
+      renderArchive();
+    }
+
+    function updateStreakCounter() {
+      const count = savedSessions.length;
+      document.getElementById('streak-counter').textContent = `${count} Saved ${count === 1 ? 'Edition' : 'Editions'}`;
+    }
+
+    function saveCurrentSession() {
+      const p = PROMPTS[currentPromptIndex];
+      const s1 = document.getElementById('step1-input').value.trim();
+      const s2 = document.getElementById('step2-input').value.trim();
+      const s3 = document.getElementById('step3-input').value.trim();
+
+      if (!s1 && !s2 && !s3) {
+        showToast("Write at least one response before saving to the archive.");
+        return;
+      }
+
+      const w1 = countWords(s1);
+      const w2 = countWords(s2);
+      const trimPercent = (w1 > 0 && w2 > 0) ? Math.round(((w1 - w2) / w1) * 100) : 0;
+
+      const entry = {
+        id: Date.now(),
+        date: new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        category: p.category,
+        french: p.french,
+        facts: p.facts,
+        step1: s1,
+        step2: s2,
+        step3: s3,
+        trimPercent: trimPercent,
+        modelStep2: p.modelStep2,
+        modelStep3: p.modelStep3
+      };
+
+      savedSessions.unshift(entry);
+      localStorage.setItem('editorial_desk_archive_v1', JSON.stringify(savedSessions));
+      updateStreakCounter();
+      renderArchive();
+      showToast("Edition saved to your local archive.");
+    }
+
+    function deleteSession(id) {
+      savedSessions = savedSessions.filter(item => item.id !== id);
+      localStorage.setItem('editorial_desk_archive_v1', JSON.stringify(savedSessions));
+      updateStreakCounter();
+      renderArchive();
+      showToast("Entry removed from archive.");
+    }
+
+    function renderArchive() {
+      const emptyEl = document.getElementById('archive-empty');
+      const listEl = document.getElementById('archive-list');
+
+      if (savedSessions.length === 0) {
+        emptyEl.classList.remove('hidden');
+        listEl.innerHTML = '';
+        return;
+      }
+
+      emptyEl.classList.add('hidden');
+      listEl.innerHTML = '';
+
+      savedSessions.forEach(entry => {
+        const card = document.createElement('article');
+        card.className = "bg-white border border-rule rounded p-5 sm:p-6 space-y-4 shadow-[0_1px_2px_rgba(0,0,0,0.03)]";
+
+        card.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-rule pb-3 gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs font-semibold text-ink">${entry.date}</span>
+              <span class="text-rule">&bull;</span>
+              <span class="text-xs font-semibold uppercase tracking-wider text-crimson">${entry.category}</span>
+              ${entry.trimPercent > 0 ? `<span class="text-[11px] bg-paperAlt border border-rule px-2 py-0.5 rounded font-medium text-ink">${entry.trimPercent}% trimmed</span>` : ''}
+            </div>
+            <div class="flex items-center gap-3">
+              <button onclick="copySavedEntryForAI(${entry.id})" class="text-xs font-semibold text-ink hover:text-crimson underline underline-offset-2">
+                Copy for AI Review
+              </button>
+              <button onclick="deleteSession(${entry.id})" class="text-xs text-muted hover:text-crimson">
+                Delete
+              </button>
+            </div>
+          </div>
+
+          <blockquote class="border-l-2 border-rule pl-3.5 text-sm font-editorial italic text-muted">
+            « ${escapeHtml(entry.french)} »
+          </blockquote>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div class="bg-paper p-3.5 rounded border border-rule/80 space-y-1">
+              <p class="text-[10px] font-semibold uppercase tracking-widest text-muted">01. Initial Translation</p>
+              <p class="font-editorial text-base text-ink">${escapeHtml(entry.step1 || '—')}</p>
+            </div>
+            <div class="bg-paper p-3.5 rounded border-l-2 border-crimson border-y border-r border-rule/80 space-y-1">
+              <p class="text-[10px] font-semibold uppercase tracking-widest text-crimson">02. Condensed Upgrade</p>
+              <p class="font-editorial text-base font-medium text-ink">${escapeHtml(entry.step2 || '—')}</p>
+            </div>
+          </div>
+
+          <div class="bg-paper p-3.5 rounded border border-rule/80 space-y-1">
+            <p class="text-[10px] font-semibold uppercase tracking-widest text-muted">03. Synthesized Sentence</p>
+            <p class="font-editorial text-base text-ink">${escapeHtml(entry.step3 || '—')}</p>
+          </div>
+        `;
+        listEl.appendChild(card);
+      });
+    }
+
+    function copyTextToClipboard(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        showToast("Copied formatted session to clipboard—ready to paste.");
+      } catch (err) {
+        showToast("Could not copy automatically.");
+      }
+      document.body.removeChild(textarea);
+    }
+
+    function copySessionForExternalAI() {
+      const p = PROMPTS[currentPromptIndex];
+      const s1 = document.getElementById('step1-input').value.trim();
+      const s2 = document.getElementById('step2-input').value.trim();
+      const s3 = document.getElementById('step3-input').value.trim();
+
+      const formatted = `Please critique my English journalistic writing practice in the style of The Economist and The Guardian:
+
+**French Prompt (${p.category}):**
+"${p.french}"
+
+**Step 1 — Initial Translation:**
+${s1 || '(Not completed)'}
+
+**Step 2 — Condensed & Improved Version:**
+${s2 || '(Not completed)'}
+
+**Step 3 — Sentence-Combining Task:**
+Facts: ${p.facts.join(' / ')}
+My Combined Sentence: ${s3 || '(Not completed)'}`;
+
+      copyTextToClipboard(formatted);
+    }
+
+    function copySavedEntryForAI(id) {
+      const entry = savedSessions.find(s => s.id === id);
+      if (!entry) return;
+      const formatted = `Please review my archived English journalistic writing session (${entry.date} — ${entry.category}):
+
+**French Prompt:**
+"${entry.french}"
+
+**Step 1 — Initial Translation:**
+${entry.step1 || '(Not completed)'}
+
+**Step 2 — Condensed & Improved Version:**
+${entry.step2 || '(Not completed)'}
+
+**Step 3 — Synthesized Sentence:**
+${entry.step3 || '(Not completed)'}`;
+
+      copyTextToClipboard(formatted);
+    }
+
+    function exportAllMarkdown() {
+      if (savedSessions.length === 0) {
+        showToast("No saved entries to export.");
+        return;
+      }
+      let md = `# The Editorial Desk — Practice Archive\n\n`;
+      savedSessions.forEach((e, idx) => {
+        md += `## ${idx + 1}. ${e.date} (${e.category})\n`;
+        md += `**French Source:** ${e.french}\n\n`;
+        md += `- **Step 1 (Translation):** ${e.step1 || '—'}\n`;
+        md += `- **Step 2 (Condensed — ${e.trimPercent}% trimmed):** ${e.step2 || '—'}\n`;
+        md += `- **Step 3 (Combined):** ${e.step3 || '—'}\n`;
+        md += `- **Model Rewrite:** ${e.modelStep2}\n\n---\n\n`;
+      });
+
+      downloadFile(md, `editorial-desk-archive-${new Date().toISOString().slice(0, 10)}.md`, 'text/markdown');
+      showToast("Exported archive as Markdown.");
+    }
+
+    function exportAllJSON() {
+      if (savedSessions.length === 0) {
+        showToast("No saved entries to back up.");
+        return;
+      }
+      const jsonStr = JSON.stringify(savedSessions, null, 2);
+      downloadFile(jsonStr, `editorial-desk-backup-${new Date().toISOString().slice(0, 10)}.json`, 'application/json');
+      showToast("JSON backup downloaded.");
+    }
+
+    function importJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (Array.isArray(imported)) {
+            const existingIds = new Set(savedSessions.map(s => s.id));
+            const merged = [...savedSessions];
+            imported.forEach(item => {
+              if (item && item.id && !existingIds.has(item.id)) {
+                merged.push(item);
+              }
+            });
+            savedSessions = merged;
+            localStorage.setItem('editorial_desk_archive_v1', JSON.stringify(savedSessions));
+            updateStreakCounter();
+            renderArchive();
+            showToast(`Imported ${imported.length} entries successfully.`);
+          }
+        } catch (err) {
+          showToast("Invalid JSON backup file.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function downloadFile(content, filename, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // =========================================================================
+    // 7. LEXICON RENDERING & FILTERING
+    // =========================================================================
+    function renderLexicon(items) {
+      const grid = document.getElementById('lexicon-grid');
+      grid.innerHTML = '';
+
+      if (items.length === 0) {
+        grid.innerHTML = `<p class="text-xs text-muted col-span-2 py-4">No matching terms found.</p>`;
+        return;
+      }
+
+      items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "bg-white border border-rule rounded p-4 sm:p-5 space-y-2 flex flex-col justify-between";
+        card.innerHTML = `
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <h4 class="font-editorial text-lg font-semibold text-ink">${item.term}</h4>
+              <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-paperAlt border border-rule text-muted">${item.category}</span>
+            </div>
+            <p class="text-xs text-muted leading-relaxed">${item.meaning}</p>
+            <blockquote class="border-l-2 border-crimson pl-3 py-0.5 text-sm font-editorial text-ink mt-2">
+              "${item.example}"
+            </blockquote>
+          </div>
+          <p class="text-[11px] text-muted pt-2 border-t border-rule/60 mt-2">
+            <span class="font-semibold text-ink">French Note:</span> ${item.frenchNote}
+          </p>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterLexicon() {
+      const query = document.getElementById('lexicon-search').value.toLowerCase().trim();
+      const cat = document.getElementById('lexicon-filter').value;
+
+      const filtered = LEXICON.filter(item => {
+        const matchesCat = cat === 'all' || item.category === cat;
+        const matchesQuery = !query ||
+          item.term.toLowerCase().includes(query) ||
+          item.meaning.toLowerCase().includes(query) ||
+          item.frenchNote.toLowerCase().includes(query) ||
+          item.example.toLowerCase().includes(query);
+        return matchesCat && matchesQuery;
+      });
+
+      renderLexicon(filtered);
+    }
+
+    // =========================================================================
+    // 8. TAB SWITCHING & UI UTILITIES
+    // =========================================================================
+    function switchTab(tabName) {
+      const views = ['practice', 'archive', 'guide'];
+      views.forEach(v => {
+        const viewEl = document.getElementById(`view-${v}`);
+        const tabEl = document.getElementById(`tab-${v}`);
+        if (v === tabName) {
+          viewEl.classList.remove('hidden');
+          tabEl.classList.remove('border-transparent', 'text-muted', 'font-medium');
+          tabEl.classList.add('border-crimson', 'text-ink', 'font-semibold');
+        } else {
+          viewEl.classList.add('hidden');
+          tabEl.classList.remove('border-crimson', 'text-ink', 'font-semibold');
+          tabEl.classList.add('border-transparent', 'text-muted', 'font-medium');
+        }
+      });
+    }
+
+    let toastTimeout;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').textContent = msg;
+      toast.classList.remove('hidden');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3200);
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
